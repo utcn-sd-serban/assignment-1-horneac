@@ -11,8 +11,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class Question {
     private int id;
-    private String authot;
+    private String author;
     private String title;
     private String text;
-    private Timestamp creatiion_date_time;
+    private Timestamp creation_date_time;
 }
