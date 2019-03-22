@@ -5,12 +5,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import ro.utcn.sd.he.assignment1.model.Question;
+import ro.utcn.sd.he.assignment1.model.Tag;
 import ro.utcn.sd.he.assignment1.model.User;
+import ro.utcn.sd.he.assignment1.persistence.api.QuestionTagRepository;
 import ro.utcn.sd.he.assignment1.persistence.api.RepositoryFactory;
 import ro.utcn.sd.he.assignment1.service.QuestionService;
+import ro.utcn.sd.he.assignment1.service.QuestionTagService;
+import ro.utcn.sd.he.assignment1.service.TagService;
 import ro.utcn.sd.he.assignment1.service.UserService;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
 
 @Component
@@ -18,6 +24,8 @@ import java.util.Scanner;
 public class CommandLineController implements CommandLineRunner {
     private final QuestionService questionService;
     private final UserService userService;
+    private final TagService tagService;
+    private final QuestionTagService questionTagService;
     private User user;
     Scanner scanner = new Scanner(System.in);
 
@@ -35,13 +43,20 @@ public class CommandLineController implements CommandLineRunner {
 
     private boolean handleCommand(String command){
         switch(command){
+            case "search":
+                handleSearch();
+                return false;
             case "list":
-                questionService.listQuestions().forEach(s ->print(s.toString()));
+                List<Question> questions = questionService.listQuestions();
+                questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());
+                for(Question q : questions){
+                    print(q.toString());
+                }
                 return false;
 
             case "login":
                 if(isLogged()){
-                    print("you need to log out first.");
+                    print("you are already logged in.");
                 } else {
                     handleLogin();
                 }
@@ -78,6 +93,37 @@ public class CommandLineController implements CommandLineRunner {
 
     }
 
+    private void handleSearch(){
+        print("what search criteria you want to use(title/tags):");
+        String criteria = scanner.next().trim();
+        if(criteria.equals("title")){
+            print("Enter title to search:");
+            String title1 = scanner.nextLine();///whyyyyyy
+            String title = scanner.nextLine();///whyyyyyy
+            List<Question> questions = questionService.listQuestions();
+            questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());;
+            questions.forEach( question -> {
+                if(question.getTitle().indexOf(title) > -1){
+                    print(question.toString());
+                }
+            });
+        }else if (criteria.equals("tags")){
+            print("enter tag:");
+            Integer i = new Integer(0);
+            String tagName = scanner.next().trim();
+            Tag tag = tagService.getTag(tagName);
+            List<Question> questions =  questionTagService.getQuestionsWithTag(tag);
+            if(questions.isEmpty()){
+                print("No questions found with the given tag");
+            }else{
+                questions.forEach(question -> print(question.toString()));
+            }
+
+        } else {
+            print("not known criteria");
+        }
+    }
+
     private void handleAdd(){
         if(isLogged()){
             print("enter the title:");
@@ -85,7 +131,13 @@ public class CommandLineController implements CommandLineRunner {
             title = scanner.nextLine(); ////whyyyyyyy
             print("enter the text:");
             String text = scanner.nextLine();
+            print("Enter some tags:");
+            String[] tags = scanner.nextLine().split(" ");
             Question question = questionService.saveQuestion(new Question(0,user.getUsername(),title,text,new Timestamp(System.currentTimeMillis())));
+            for(String s: tags){
+                Tag tag = tagService.saveTag(new Tag(0, s));
+                questionTagService.save(question,tag);
+            }
             print("Created question: " + question + ".");
         } else {
             print("You need to be logged in to ask a question");

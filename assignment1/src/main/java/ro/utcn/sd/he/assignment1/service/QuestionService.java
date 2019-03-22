@@ -13,6 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class QuestionService {
     private final RepositoryFactory factory ;
+    private final TagService tagService;
 
     @Transactional
     public List<Question> listQuestions(){return factory.createQuestionRepository().findAll();}
@@ -26,4 +27,6 @@ public class QuestionService {
         Optional<Question> question = factory.createQuestionRepository().findById(id);
         factory.createQuestionRepository().remove(question.get());
     }
+
+
 }
