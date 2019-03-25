@@ -103,7 +103,7 @@ public class CommandLineController implements CommandLineRunner {
             List<Question> questions = questionService.listQuestions();
             questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());;
             questions.forEach( question -> {
-                if(question.getTitle().indexOf(title) > -1){
+                if(question.getTitle().toLowerCase().indexOf(title.toLowerCase()) > -1){
                     print(question.toString());
                 }
             });
