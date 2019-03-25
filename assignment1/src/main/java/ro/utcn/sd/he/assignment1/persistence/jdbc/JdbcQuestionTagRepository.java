@@ -18,7 +18,7 @@ public class JdbcQuestionTagRepository implements QuestionTagRepository {
     @Override
     public List<Question> getQuestionsWithTag(Tag tag) {
         return template.query("Select * FROM question JOIN question_tag ON question.id = question_tag.questionID" +
-                "                              JOIN tag ON question_tag.tagID = tag.id WHERE tag.id = ?",
+                        "                              JOIN tag ON question_tag.tagID = tag.id WHERE tag.id = ?",
                 (resultSet, i) -> new Question(
                         resultSet.getInt("id"),
                         resultSet.getString("author"),
@@ -32,8 +32,8 @@ public class JdbcQuestionTagRepository implements QuestionTagRepository {
     @Override
     public List<Tag> getTagsOfQuestion(Question question) {
         return template.query("Select * FROM question JOIN question_tag ON question.id = question_tag.questionID" +
-                "                              JOIN tag ON question_tag.tagID = tag.id WHERE question.id = ?",
-                (resultSet, i) -> new Tag(resultSet.getInt("id"),resultSet.getString("name")),
+                        "                              JOIN tag ON question_tag.tagID = tag.id WHERE question.id = ?",
+                (resultSet, i) -> new Tag(resultSet.getInt("id"), resultSet.getString("name")),
                 question.getId());
     }
 
@@ -42,14 +42,14 @@ public class JdbcQuestionTagRepository implements QuestionTagRepository {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(template);
         insert.setTableName("question_tag");
         Map<String, Object> data = new HashMap<>();
-        data.put("questionID",question.getId());
-        data.put("tagID",tag.getId());
+        data.put("questionID", question.getId());
+        data.put("tagID", tag.getId());
         insert.execute(data);
     }
 
     @Override
     public void remove(Question question, Tag tag) {
         template.update("DELETE * FROM question_tag WHERE questionID = ?, tagID = ?",
-                    question.getId(),tag.getId());
+                question.getId(), tag.getId());
     }
 }
