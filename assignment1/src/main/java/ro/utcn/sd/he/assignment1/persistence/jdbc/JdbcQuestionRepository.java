@@ -2,6 +2,7 @@ package ro.utcn.sd.he.assignment1.persistence.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.persistence.api.QuestionRepository;
@@ -14,6 +15,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JdbcQuestionRepository implements QuestionRepository {
     private final JdbcTemplate template;
+    private RowMapper<Question> mapper = ((resultSet, i) -> new Question(resultSet.getInt("id"),
+            resultSet.getString("author"),
+            resultSet.getString("title"),
+            resultSet.getString("text"),
+            resultSet.getTimestamp("creation_date_time")));
 
 
     @Override
@@ -31,11 +37,7 @@ public class JdbcQuestionRepository implements QuestionRepository {
     public Optional<Question> findById(int id) {
         List<Question> questions = template.query("SELECT * FROM question WHERE id = ?",
                     new Object[] {id},
-                (resultSet, i) ->  new Question(resultSet.getInt("id"),
-                        resultSet.getString("author"),
-                        resultSet.getString("title"),
-                        resultSet.getString("text"),
-                        resultSet.getTimestamp("creation_date_time")));
+                    mapper);
 
 
         return questions.isEmpty() ? Optional.empty() : Optional.of(questions.get(0));
@@ -49,12 +51,8 @@ public class JdbcQuestionRepository implements QuestionRepository {
     @Override
     public List<Question> findAll() {
 
-        return template.query("SELECT * FROM question", (resultSet, i ) ->
-                new Question(resultSet.getInt("id"),
-                            resultSet.getString("author"),
-                            resultSet.getString("title"),
-                            resultSet.getString("text"),
-                            resultSet.getTimestamp("creation_date_time")));
+        return template.query("SELECT * FROM question",
+                mapper);
 
     }
 
