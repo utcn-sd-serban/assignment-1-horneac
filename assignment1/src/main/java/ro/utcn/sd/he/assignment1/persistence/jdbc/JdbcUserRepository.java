@@ -2,8 +2,11 @@ package ro.utcn.sd.he.assignment1.persistence.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import ro.utcn.sd.he.assignment1.model.Answer;
+import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.model.User;
 import ro.utcn.sd.he.assignment1.persistence.api.UserRepository;
 
@@ -18,6 +21,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JdbcUserRepository implements UserRepository {
     private final JdbcTemplate template;
+    private final RowMapper<User> rowMapper = ((resultSet, i) -> new User(
+            resultSet.getInt("id"),
+            resultSet.getString("username"),
+            resultSet.getString("password"),
+            resultSet.getString("type"),
+            resultSet.getBoolean("banned"),
+            resultSet.getInt("score")
+    ));
+
+    @Override
+    public User getAuthorOf(Answer answer) {
+        String username = answer.getAuthor();
+        User user = findByUsername(username).get();
+        return user;
+
+    }
 
     @Override
     public User save(User user) {
@@ -33,14 +52,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public Optional<User> findByID(int id) {
         List<User> users =  template.query("SELECT * FROM user WHERE id = ?",
-                (resultSet, i) -> new User(
-                        resultSet.getInt("id"),
-                        resultSet.getString("username"),
-                        resultSet.getString("password"),
-                        resultSet.getString("type"),
-                        resultSet.getBoolean("banned"),
-                        resultSet.getInt("score")
-                ),
+                rowMapper,
                 id);
         return users.isEmpty()? Optional.empty() : Optional.of(users.get(0));
     }
@@ -48,6 +60,17 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public void remove(User user) {
         template.update("DELETE FROM user WHERE id = ?", user.getId());
+    }
+
+    /*
+    @param question
+    @return user instance of the author of the question
+     */
+    @Override
+    public User getAuthorOf(Question question) {
+        String username = question.getAuthor();
+        User user =  findByUsername( username).get();
+        return user;
     }
 
     @Override

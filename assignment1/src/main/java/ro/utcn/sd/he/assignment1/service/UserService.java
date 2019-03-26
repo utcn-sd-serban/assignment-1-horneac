@@ -2,6 +2,8 @@ package ro.utcn.sd.he.assignment1.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ro.utcn.sd.he.assignment1.model.Answer;
+import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.model.User;
 import ro.utcn.sd.he.assignment1.persistence.api.RepositoryFactory;
 import ro.utcn.sd.he.assignment1.persistence.api.UserRepository;
@@ -38,6 +40,19 @@ public class UserService {
         if(password.equals(user.get().getPassword())){
             return user.get();
         } else {
+            return null;
+        }
+    }
+
+    @Transactional
+    public User getAuthorOf(Object post){
+        if( post.getClass().getSimpleName().equals("Answer")){
+            return factory.createUserRepository().getAuthorOf((Answer) post);
+        }else if( post.getClass().getSimpleName().equals("Question")){
+            return factory.createUserRepository().getAuthorOf((Question) post);
+        }
+        else{
+            System.out.println("You can only get the author of an answer or question post!");
             return null;
         }
     }
