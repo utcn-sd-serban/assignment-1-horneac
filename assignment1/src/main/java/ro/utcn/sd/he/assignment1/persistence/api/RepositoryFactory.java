@@ -11,5 +11,7 @@ public interface RepositoryFactory {
 
     QuestionTagRepository createQuestionTagRepository();
 
+    AnswerRepository createAnswerRepository();
+
 
 }

@@ -18,6 +18,11 @@ public class JdbcRepositoryFactory implements RepositoryFactory {
     }
 
     @Override
+    public AnswerRepository createAnswerRepository() {
+        return new JdbcAnswerRepository(template);
+    }
+
+    @Override
     public TagRepository createTagRepository() {
         return new JdbcTagRepository(template);
     }
