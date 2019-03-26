@@ -17,6 +17,10 @@ public class QuestionService {
     @Transactional
     public List<Question> listQuestions(){return factory.createQuestionRepository().findAll();}
 
+    public Question findById(int id){
+        return factory.createQuestionRepository().findById(id).get();
+    }
+
     /*
 
     @param question -> a question object to save in the repository
@@ -26,6 +30,7 @@ public class QuestionService {
         return factory.createQuestionRepository().save(question);
     }
 
+    @Transactional
     public void deleteQuestion(int id){
         Optional<Question> question = factory.createQuestionRepository().findById(id);
         factory.createQuestionRepository().remove(question.get());
