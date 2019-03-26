@@ -13,11 +13,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class QuestionService {
     private final RepositoryFactory factory ;
-    private final TagService tagService;
 
     @Transactional
     public List<Question> listQuestions(){return factory.createQuestionRepository().findAll();}
 
+    /*
+
+    @param question -> a question object to save in the repository
+     */
     @Transactional
     public Question saveQuestion(Question question){
         return factory.createQuestionRepository().save(question);

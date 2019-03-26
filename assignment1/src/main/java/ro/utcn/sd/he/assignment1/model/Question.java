@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Question {
     private int id;
     private String author;
