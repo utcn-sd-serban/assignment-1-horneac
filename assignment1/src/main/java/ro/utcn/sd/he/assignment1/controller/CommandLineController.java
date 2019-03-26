@@ -1,18 +1,14 @@
-package ro.utcn.sd.he.assignment1.Controller;
+package ro.utcn.sd.he.assignment1.controller;
 
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import ro.utcn.sd.he.assignment1.model.Answer;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.model.Tag;
 import ro.utcn.sd.he.assignment1.model.User;
-import ro.utcn.sd.he.assignment1.persistence.api.QuestionTagRepository;
-import ro.utcn.sd.he.assignment1.persistence.api.RepositoryFactory;
-import ro.utcn.sd.he.assignment1.service.QuestionService;
-import ro.utcn.sd.he.assignment1.service.QuestionTagService;
-import ro.utcn.sd.he.assignment1.service.TagService;
-import ro.utcn.sd.he.assignment1.service.UserService;
+import ro.utcn.sd.he.assignment1.service.*;
 
 import java.sql.Timestamp;
 import java.util.Comparator;
@@ -26,6 +22,7 @@ public class CommandLineController implements CommandLineRunner {
     private final UserService userService;
     private final TagService tagService;
     private final QuestionTagService questionTagService;
+    private final AnswerService answerService;
     private User user;
     Scanner scanner = new Scanner(System.in);
 
@@ -35,6 +32,7 @@ public class CommandLineController implements CommandLineRunner {
         while(!done){
             print("Enter command:");
             String command = scanner.next().trim();
+            scanner.nextLine();     //dump the line
             done = handleCommand(command);
 
 
@@ -86,6 +84,21 @@ public class CommandLineController implements CommandLineRunner {
                 }
                 return false;
 
+            case "listAnswers":
+                handleListAnswers();
+                return false;
+
+            case "edit":
+                handleEdit();
+                return false;
+
+            case "show":
+                handleShow();
+                return false;
+
+            case "answer":
+                handleAnswer();
+                return false;
             default:
                 System.out.println("Command unknwon");
                 return false;
@@ -93,13 +106,61 @@ public class CommandLineController implements CommandLineRunner {
 
     }
 
+    private void handleListAnswers(){
+        answerService.findAllAnswers().forEach( a -> print(a.toString()));
+    }
+
+    private void handleEdit(){
+        if(isLogged()){
+            print("What answer do you want to edit (id):");
+            int answerId = scanner.nextInt();
+            scanner.nextLine(); //dump remaining line
+            Answer answer = answerService.findById(answerId);
+            if(userService.getAuthorOf(answer).getUsername().equals(user.getUsername())){
+                print("New text:");
+                String text = scanner.nextLine();
+                answer.setText(text);           //TODO when it is edited, should i change the creation time? or add last edited time?
+                answerService.saveAnswer(answer);
+            } else {
+                print("You can edit only your own questions!");
+            }
+        } else {
+            print("You need to be logged in to edit an answer!");
+        }
+    }
+
+    private void handleShow(){
+        print("Select question(id):");
+        int questionId = scanner.nextInt();
+        Question question = questionService.findById(questionId);
+        List<Answer> answers = answerService.findAnswersOf(question);
+        print(question.toString());
+        for(Answer a : answers){
+            print("\t" + a.toString());
+        }
+
+    }
+
+    private void handleAnswer(){
+        if (isLogged()){
+            print("what question(id) do you want to answer:");
+            int questionId = scanner.nextInt();
+            print("give your answer:");
+            String text = scanner.nextLine();
+            answerService.saveAnswer(new Answer(0,user.getUsername(),text, new Timestamp(System.currentTimeMillis()),questionId));
+
+        } else {
+            print("You need to login to answer a question");
+        }
+    }
+
     private void handleSearch(){
         print("what search criteria you want to use(title/tags):");
         String criteria = scanner.next().trim();
+        scanner.nextLine();
         if(criteria.equals("title")){
             print("Enter title to search:");
-            String title1 = scanner.nextLine();///whyyyyyy
-            String title = scanner.nextLine();///whyyyyyy
+            String title = scanner.nextLine();
             List<Question> questions = questionService.listQuestions();
             questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());;
             questions.forEach( question -> {
@@ -128,7 +189,6 @@ public class CommandLineController implements CommandLineRunner {
         if(isLogged()){
             print("enter the title:");
             String title = scanner.nextLine();
-            title = scanner.nextLine(); ////whyyyyyyy
             print("enter the text:");
             String text = scanner.nextLine();
             print("Enter some tags:");
