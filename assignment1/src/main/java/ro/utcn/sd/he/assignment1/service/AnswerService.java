@@ -33,6 +33,11 @@ public class AnswerService {
     }
 
     @Transactional
+    public Answer findById(int id){
+        return factory.createAnswerRepository().findById(id).get();
+    }
+
+    @Transactional
     public void deleteAnswer(int id) {
         Optional<Answer> answer = factory.createAnswerRepository().findById(id);
         factory.createAnswerRepository().remove(answer.get());
