@@ -13,5 +13,7 @@ public interface RepositoryFactory {
 
     AnswerRepository createAnswerRepository();
 
+    VoteRepository createVoteRepository();
+
 
 }

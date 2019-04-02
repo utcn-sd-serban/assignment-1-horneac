@@ -23,6 +23,7 @@ public class CommandLineController implements CommandLineRunner {
     private final TagService tagService;
     private final QuestionTagService questionTagService;
     private final AnswerService answerService;
+    private final VoteService voteService;
     private User user;
     Scanner scanner = new Scanner(System.in);
 
@@ -46,7 +47,6 @@ public class CommandLineController implements CommandLineRunner {
                 return false;
             case "list":
                 List<Question> questions = questionService.listQuestions();
-                questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());
                 for(Question q : questions){
                     print(q.toString());
                 }
@@ -58,6 +58,10 @@ public class CommandLineController implements CommandLineRunner {
                 } else {
                     handleLogin();
                 }
+                return false;
+
+            case"vote":
+                handleVote();
                 return false;
             case"logout":
                 if(isLogged()){
@@ -86,6 +90,10 @@ public class CommandLineController implements CommandLineRunner {
 
             case "listAnswers":
                 handleListAnswers();
+                return false;
+
+            case "deleteAnswer":
+                handleDeleteAnswer();
                 return false;
 
             case "edit":
@@ -129,14 +137,60 @@ public class CommandLineController implements CommandLineRunner {
         }
     }
 
+    public void handleDeleteAnswer(){
+        print("What answer(id) you want to delete:");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        answerService.deleteAnswer(id);
+    }
+
+    public void handleVote(){
+        if(user == null){
+            print("you need to be logged in to vote!");
+            return;
+        }
+        print("question or answer?");
+        String type = scanner.next().trim();
+        scanner.nextLine(); //drop remaining line
+        print("insert the id of the post you want to vote:");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        print("+1 or -1?");
+        int vote = scanner.nextInt();
+        scanner.nextLine();
+        if(type.equals("question")){
+            Question question = questionService.findById(id);
+            if(vote == +1){
+                voteService.voteUp(user, question);
+            }
+            else if(vote == -1){
+                voteService.voteDown(user,question);
+            } else {
+                print("invalid vote option");
+            }
+        } else if ( type.equals("answer")){
+            Answer answer = answerService.findById(id);
+            if(vote == +1){
+                voteService.voteUp(user, answer);
+            }
+            else if(vote == -1){
+                voteService.voteDown(user,answer);
+            } else {
+                print("invalid vote option");
+            }
+        } else {
+            print("You can only vote a question or an answer");
+        }
+    }
+
     private void handleShow(){
         print("Select question(id):");
         int questionId = scanner.nextInt();
         Question question = questionService.findById(questionId);
         List<Answer> answers = answerService.findAnswersOf(question);
-        print(question.toString());
+        print(question.toString() + "Votes: " + voteService.getVoteCount(question));
         for(Answer a : answers){
-            print("\t" + a.toString());
+            print("\t" + a.toString() + "Votes: " + voteService.getVoteCount(a));
         }
 
     }
@@ -145,6 +199,7 @@ public class CommandLineController implements CommandLineRunner {
         if (isLogged()){
             print("what question(id) do you want to answer:");
             int questionId = scanner.nextInt();
+            scanner.nextLine(); //dump line
             print("give your answer:");
             String text = scanner.nextLine();
             answerService.saveAnswer(new Answer(0,user.getUsername(),text, new Timestamp(System.currentTimeMillis()),questionId));

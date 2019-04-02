@@ -12,6 +12,13 @@ public class InMemoryRepositoryFactory implements RepositoryFactory {
     private final InMemoryTagRepository tagRepo = new InMemoryTagRepository();
     private final InMemoryQuestionTagRepository questionTagRepo = new InMemoryQuestionTagRepository();
     private final InMemoryAnswerRepository answerRepo = new InMemoryAnswerRepository();
+    private final InMemoryVoteRepository voteRepository = new InMemoryVoteRepository();
+
+    @Override
+    public VoteRepository createVoteRepository() {
+        return voteRepository;
+    }
+
 
     @Override
     public QuestionRepository createQuestionRepository() {

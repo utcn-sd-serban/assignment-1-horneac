@@ -23,6 +23,11 @@ public class JdbcRepositoryFactory implements RepositoryFactory {
     }
 
     @Override
+    public VoteRepository createVoteRepository() {
+        return new JdbcVoteRepository(template);
+    }
+
+    @Override
     public TagRepository createTagRepository() {
         return new JdbcTagRepository(template);
     }
