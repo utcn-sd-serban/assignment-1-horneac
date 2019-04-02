@@ -30,7 +30,7 @@ public class AnswerService {
     @Transactional
     public List<Answer> findAnswersOf(Question question){
         List<Answer> answers = factory.createAnswerRepository().getAnswersOf(question);
-        answers.sort(new CustomComparator());
+        answers.sort(new CustomComparator().reversed());
         return answers;
     }
 
