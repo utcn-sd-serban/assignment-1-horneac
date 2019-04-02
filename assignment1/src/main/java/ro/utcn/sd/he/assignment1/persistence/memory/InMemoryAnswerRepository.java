@@ -2,7 +2,6 @@ package ro.utcn.sd.he.assignment1.persistence.memory;
 
 import ro.utcn.sd.he.assignment1.model.Answer;
 import ro.utcn.sd.he.assignment1.model.Question;
-import ro.utcn.sd.he.assignment1.model.User;
 import ro.utcn.sd.he.assignment1.persistence.api.AnswerRepository;
 
 import java.util.ArrayList;

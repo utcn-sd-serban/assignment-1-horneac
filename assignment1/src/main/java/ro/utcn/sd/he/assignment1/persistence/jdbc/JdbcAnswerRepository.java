@@ -17,11 +17,11 @@ import java.util.Optional;
 public class JdbcAnswerRepository implements AnswerRepository {
     private final JdbcTemplate template;
     private RowMapper<Answer> rowMapper = ((resultSet, i) -> new Answer(
-            resultSet.getInt("id"),
-            resultSet.getString("author"),
-            resultSet.getString("text"),
-            resultSet.getTimestamp("creation_date_time"),
-            resultSet.getInt("questionID")
+            resultSet.getInt("answer.id"),
+            resultSet.getString("answer.author"),
+            resultSet.getString("answer.text"),
+            resultSet.getTimestamp("answer.creation_date_time"),
+            resultSet.getInt("answer.questionID")
     ));
 
     @Override
