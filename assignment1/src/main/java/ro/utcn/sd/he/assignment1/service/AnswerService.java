@@ -8,6 +8,7 @@ import ro.utcn.sd.he.assignment1.persistence.api.RepositoryFactory;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,7 @@ public class AnswerService {
     @Transactional
     public List<Answer> findAnswersOf(Question question){
         List<Answer> answers = factory.createAnswerRepository().getAnswersOf(question);
+        answers.sort(new CustomComparator());
         return answers;
     }
 
@@ -41,6 +43,12 @@ public class AnswerService {
     public void deleteAnswer(int id) {
         Optional<Answer> answer = factory.createAnswerRepository().findById(id);
         factory.createAnswerRepository().remove(answer.get());
+    }
+
+    public class CustomComparator implements Comparator<Answer>{
+        public int compare(Answer a1, Answer a2){
+            return factory.createVoteRepository().getVoteCount(a1) - factory.createVoteRepository().getVoteCount(a2);
+        }
     }
 
 }
