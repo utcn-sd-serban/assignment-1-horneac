@@ -37,6 +37,9 @@ public class UserService {
     @Transactional
     public User logIn(String username, String password){
         Optional<User> user = factory.createUserRepository().findByUsername(username);
+        if(!user.isPresent()){
+            return null;
+        }
         if(password.equals(user.get().getPassword())){
             return user.get();
         } else {

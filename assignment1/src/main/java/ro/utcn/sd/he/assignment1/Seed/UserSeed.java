@@ -17,6 +17,7 @@ public class UserSeed implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if(service.listUsers().isEmpty()){
+            service.saveUser(new User(0, "horneac1","123456","user",false,0));
             service.saveUser(new User(0,"horneac", "123456","user", false,0));
             service.saveUser((new User(0,"admin","admin","moderator",false,0)));
         }
