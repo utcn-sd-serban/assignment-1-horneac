@@ -18,7 +18,7 @@ public class Vote {
     @Column(name = "userID")
     private int userID;
     @Column(name = "questionID")
-    private int questionID;
+    private Integer questionID;
     @Column(name = "answerID")
-    private int answerID;
+    private Integer answerID;
 }
