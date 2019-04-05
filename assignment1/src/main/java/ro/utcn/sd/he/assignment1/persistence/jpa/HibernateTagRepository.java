@@ -2,7 +2,6 @@ package ro.utcn.sd.he.assignment1.persistence.jpa;
 
 import lombok.RequiredArgsConstructor;
 import ro.utcn.sd.he.assignment1.model.Tag;
-import ro.utcn.sd.he.assignment1.model.User;
 import ro.utcn.sd.he.assignment1.persistence.api.TagRepository;
 
 import javax.persistence.EntityManager;
@@ -18,11 +17,10 @@ public class HibernateTagRepository implements TagRepository {
 
     @Override
     public Tag save(Tag tag) {
-        if(tag.getId() == 0){
+        if (tag.getId() == 0) {
             entityManager.persist(tag);
             return tag;
-        }
-        else{
+        } else {
             return entityManager.merge(tag);
         }
     }
@@ -32,8 +30,8 @@ public class HibernateTagRepository implements TagRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
-        List<Tag> tags = entityManager.createQuery(criteriaQuery.select(tagRoot).where(criteriaBuilder.equal(tagRoot.get("name"),name))).getResultList();
-        return Optional.of(tags.get(0));
+        List<Tag> tags = entityManager.createQuery(criteriaQuery.select(tagRoot).where(criteriaBuilder.equal(tagRoot.get("name"), name))).getResultList();
+        return Optional.ofNullable(tags.size() == 0 ? null : tags.get(0));
     }
 
     @Override
@@ -45,7 +43,7 @@ public class HibernateTagRepository implements TagRepository {
 
     }
 
-    public Optional<Tag> findById(int id){
-        return Optional.ofNullable(entityManager.find(Tag.class,id));
+    public Optional<Tag> findById(int id) {
+        return Optional.ofNullable(entityManager.find(Tag.class, id));
     }
 }

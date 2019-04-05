@@ -11,7 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -67,7 +66,8 @@ public class HibernateVoteRepository implements VoteRepository {
 
         Root<Vote> voteRoot = criteriaQuery.from(Vote.class);
         criteriaQuery.select(criteriaBuilder.sum(voteRoot.get("type"))).where(criteriaBuilder.equal(voteRoot.get("questionID"), question.getId()));
-        int votes =(int) entityManager.createQuery(criteriaQuery).getSingleResult();
+        Object result = entityManager.createQuery(criteriaQuery).getSingleResult();
+        int votes = result == null? 0 : (int) result;
         return votes;
     }
 
@@ -78,7 +78,8 @@ public class HibernateVoteRepository implements VoteRepository {
 
         Root<Vote> voteRoot = criteriaQuery.from(Vote.class);
         criteriaQuery.select(criteriaBuilder.sum(voteRoot.get("type"))).where(criteriaBuilder.equal(voteRoot.get("answerID"), answer.getId()));
-        int votes =(int) entityManager.createQuery(criteriaQuery).getSingleResult();
+        Object result = entityManager.createQuery(criteriaQuery).getSingleResult();
+        int votes = result == null ? 0 : (int) result;
         return votes;
     }
 
@@ -88,7 +89,7 @@ public class HibernateVoteRepository implements VoteRepository {
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(Vote.class);
         Root<Vote> voteRoot = criteriaQuery.from(Vote.class);
         List<Vote> votes = entityManager.createQuery(criteriaQuery.select(voteRoot).where(criteriaBuilder.and(criteriaBuilder.equal(voteRoot.get("userID"), user.getId()), criteriaBuilder.equal(voteRoot.get("questionID"), question.getId())))).getResultList();
-        return votes.get(0);
+        return votes.size() == 0 ? null : votes.get(0);
     }
 
     @Override
@@ -97,6 +98,6 @@ public class HibernateVoteRepository implements VoteRepository {
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(Vote.class);
         Root<Vote> voteRoot = criteriaQuery.from(Vote.class);
         List<Vote> votes = entityManager.createQuery(criteriaQuery.select(voteRoot).where(criteriaBuilder.and(criteriaBuilder.equal(voteRoot.get("userID"), user.getId()), criteriaBuilder.equal(voteRoot.get("answerID"), answer.getId())))).getResultList();
-        return votes.get(0);
+        return votes.size() == 0 ? null : votes.get(0);
     }
 }

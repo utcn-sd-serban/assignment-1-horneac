@@ -54,7 +54,7 @@ public class HibernateUserRepository implements UserRepository {
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(User.class);
         Root<User> userRoot = criteriaQuery.from(User.class);
         List<User> users = entityManager.createQuery(criteriaQuery.select(userRoot).where(criteriaBuilder.equal(userRoot.get("username"),username))).getResultList();
-        return Optional.of(users.get(0));
+        return Optional.of(users.size() == 0 ? null : users.get(0));
 
     }
 
