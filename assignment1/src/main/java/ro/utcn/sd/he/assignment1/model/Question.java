@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Data
@@ -22,5 +19,6 @@ public class Question {
     private String author;
     private String title;
     private String text;
+    @Column(name = "creation_date_time")
     private Timestamp creation_date_time;
 }
