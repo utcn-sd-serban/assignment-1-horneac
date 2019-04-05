@@ -40,6 +40,7 @@ public class CommandLineController implements CommandLineRunner {
         }
     }
 
+
     private boolean handleCommand(String command){
         switch(command){
             case "search":
@@ -100,6 +101,10 @@ public class CommandLineController implements CommandLineRunner {
                 handleEdit();
                 return false;
 
+            case "register":
+                handleRegister();
+                return false;
+
             case "show":
                 handleShow();
                 return false;
@@ -135,6 +140,19 @@ public class CommandLineController implements CommandLineRunner {
         } else {
             print("You need to be logged in to edit an answer!");
         }
+    }
+
+
+    private void handleRegister(){
+        print("enter the username you want to login with:");
+        String username = scanner.next().trim();
+        scanner.nextLine();
+        print("enter a stronk password:");
+        String password = scanner.next().trim();
+        scanner.nextLine();
+        User user = new User(0,username,password,"user",false,0);
+        user = userService.saveUser(user);
+        print("Registered succesfully:\n" + user.toString());
     }
 
     public void handleDeleteAnswer(){
