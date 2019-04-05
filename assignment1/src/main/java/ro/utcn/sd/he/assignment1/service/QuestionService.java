@@ -21,9 +21,10 @@ public class QuestionService {
         questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());
         return questions;
     }
-
+    @Transactional
     public Question findById(int id) {
-        return factory.createQuestionRepository().findById(id).get();
+        Optional<Question> question = factory.createQuestionRepository().findById(id);
+        return question.isPresent()? question.get() : null;
     }
 
     /*
