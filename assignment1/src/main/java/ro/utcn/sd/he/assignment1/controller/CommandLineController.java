@@ -205,10 +205,15 @@ public class CommandLineController implements CommandLineRunner {
         print("Select question(id):");
         int questionId = scanner.nextInt();
         Question question = questionService.findById(questionId);
-        List<Answer> answers = answerService.findAnswersOf(question);
-        print(question.toString() + "Votes: " + voteService.getVoteCount(question));
-        for(Answer a : answers){
-            print("\t" + a.toString() + "Votes: " + voteService.getVoteCount(a));
+        if(question != null){
+            List<Answer> answers = answerService.findAnswersOf(question);
+            print(question.toString() + "Votes: " + voteService.getVoteCount(question));
+            for(Answer a : answers){
+                print("\t" + a.toString() + "Votes: " + voteService.getVoteCount(a));
+            }
+
+        } else {
+            print("the question doesn't exist");
         }
 
     }
