@@ -98,8 +98,8 @@ public class JdbcVoteRepository implements VoteRepository {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("type", vote.getType());
         data.put("userID", vote.getUserID());
-        data.put("questionID", vote.getQuestionID() == 0 ? null : vote.getQuestionID());
-        data.put("answerID", vote.getAnswerID() == 0 ? null : vote.getAnswerID());
+        data.put("questionID", vote.getQuestionID());
+        data.put("answerID", vote.getAnswerID());
         return insert.executeAndReturnKey(data).intValue();
     }
 
