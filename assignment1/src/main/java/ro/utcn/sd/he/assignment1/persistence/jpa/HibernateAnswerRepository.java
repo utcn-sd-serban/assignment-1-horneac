@@ -36,7 +36,7 @@ public class HibernateAnswerRepository implements AnswerRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(Answer.class);
         Root<Answer> answerRoot = criteriaQuery.from(Answer.class);
-        return entityManager.createQuery(criteriaQuery.select(answerRoot).where(criteriaBuilder.equal(answerRoot.get("questionId"),question.getId()))).getResultList();
+        return entityManager.createQuery(criteriaQuery.select(answerRoot).where(criteriaBuilder.equal(answerRoot.get("questionId"), question.getId()))).getResultList();
     }
 
     @Override

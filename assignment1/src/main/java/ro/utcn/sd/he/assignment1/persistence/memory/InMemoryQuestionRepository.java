@@ -11,11 +11,11 @@ public class InMemoryQuestionRepository implements QuestionRepository {
 
     @Override
     public synchronized Question save(Question question) {
-        if(question.getId() != 0){
-            data.put(question.getId(),question);
-        } else  {
+        if (question.getId() != 0) {
+            data.put(question.getId(), question);
+        } else {
             question.setId(currentId++);
-            data.put(question.getId() ,question);
+            data.put(question.getId(), question);
 
         }
         return question;
@@ -33,6 +33,6 @@ public class InMemoryQuestionRepository implements QuestionRepository {
 
     @Override
     public List<Question> findAll() {
-        return new ArrayList<Question>(data.values());
+        return new ArrayList<>(data.values());
     }
 }

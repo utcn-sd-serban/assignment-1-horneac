@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "a1.repository-type", havingValue = "HIBERNATE")
 public class HibernateRepositoryFactory implements RepositoryFactory {
-   private final EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Override
     public QuestionRepository createQuestionRepository() {

@@ -19,18 +19,17 @@ public class HibernateUserRepository implements UserRepository {
 
     @Override
     public User save(User user) {
-        if(user.getId() == 0){
+        if (user.getId() == 0) {
             entityManager.persist(user);
             return user;
-        }
-        else{
+        } else {
             return entityManager.merge(user);
         }
     }
 
     @Override
     public Optional<User> findByID(int id) {
-        return Optional.ofNullable(entityManager.find(User.class,id));
+        return Optional.ofNullable(entityManager.find(User.class, id));
     }
 
     @Override
@@ -53,8 +52,8 @@ public class HibernateUserRepository implements UserRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(User.class);
         Root<User> userRoot = criteriaQuery.from(User.class);
-        List<User> users = entityManager.createQuery(criteriaQuery.select(userRoot).where(criteriaBuilder.equal(userRoot.get("username"),username))).getResultList();
-        return Optional.of(users.size() == 0 ? null : users.get(0));
+        List<User> users = entityManager.createQuery(criteriaQuery.select(userRoot).where(criteriaBuilder.equal(userRoot.get("username"), username))).getResultList();
+        return Optional.ofNullable(users.size() == 0 ? null : users.get(0));
 
     }
 

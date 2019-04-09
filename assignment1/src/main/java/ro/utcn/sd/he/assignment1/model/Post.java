@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Post {
+abstract class Post {
     private int id;
     private String author;
     private String text;

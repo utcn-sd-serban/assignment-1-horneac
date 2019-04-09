@@ -16,6 +16,7 @@ public interface UserRepository {
     void remove(User user);
 
     User getAuthorOf(Question question);        //could make a parent class Post for Question and Answer so no overloading is needed
+
     User getAuthorOf(Answer answer);
 
     Optional<User> findByUsername(String username);

@@ -14,13 +14,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryUserRepository implements UserRepository {
     private final Map<Integer, User> data = new ConcurrentHashMap<>();
-    private AtomicInteger currentId = new AtomicInteger(1);
+    private final AtomicInteger currentId = new AtomicInteger(1);
 
     @Override
     public User getAuthorOf(Answer answer) {
         String username = answer.getAuthor();
-        User user = findByUsername(username).get();
-        return user;
+        return findByUsername(username).get();
 
 
     }
@@ -28,8 +27,7 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public User getAuthorOf(Question question) {
         String username = question.getAuthor();
-        User user = findByUsername(username).get();
-        return user;
+        return findByUsername(username).get();
     }
 
     @Override

@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryAnswerRepository implements AnswerRepository {
-    private final Map<Integer, Answer> repo = new ConcurrentHashMap<Integer, Answer>();
-    private AtomicInteger currentId = new AtomicInteger(1);
+    private final Map<Integer, Answer> repo = new ConcurrentHashMap<>();
+    private final AtomicInteger currentId = new AtomicInteger(1);
 
     @Override
     public Answer save(Answer answer) {
@@ -41,11 +41,11 @@ public class InMemoryAnswerRepository implements AnswerRepository {
 
     @Override
     public List<Answer> findAll() {
-        return new ArrayList<Answer>(repo.values());
+        return new ArrayList<>(repo.values());
     }
 
     private List<Answer> answersOf(Question question) {
-        List<Answer> answers = new ArrayList<Answer>();
+        List<Answer> answers = new ArrayList<>();
         for (Answer a : repo.values()) {
             if (a.getQuestionId() == question.getId()) {
                 answers.add(a);

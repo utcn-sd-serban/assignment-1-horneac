@@ -24,5 +24,6 @@ public interface VoteRepository {
     int getVoteCount(Answer answer);
 
     Vote findVote(User user, Question question);
+
     Vote findVote(User user, Answer answer);
 }

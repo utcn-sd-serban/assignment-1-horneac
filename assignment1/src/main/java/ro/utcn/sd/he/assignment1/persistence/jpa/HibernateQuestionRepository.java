@@ -3,7 +3,6 @@ package ro.utcn.sd.he.assignment1.persistence.jpa;
 import lombok.RequiredArgsConstructor;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.persistence.api.QuestionRepository;
-import ro.utcn.sd.he.assignment1.service.QuestionService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,18 +16,17 @@ public class HibernateQuestionRepository implements QuestionRepository {
 
     @Override
     public Question save(Question question) {
-        if(question.getId() == 0){
+        if (question.getId() == 0) {
             entityManager.persist(question);
             return question;
-        }
-        else{
+        } else {
             return entityManager.merge(question);
         }
     }
 
     @Override
     public Optional<Question> findById(int id) {
-        return Optional.ofNullable(entityManager.find(Question.class,id));
+        return Optional.ofNullable(entityManager.find(Question.class, id));
     }
 
     @Override

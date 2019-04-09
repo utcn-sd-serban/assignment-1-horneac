@@ -8,8 +8,6 @@ import java.util.Optional;
 public interface QuestionRepository {
 
 
-
-
     Question save(Question question);
 
     Optional<Question> findById(int id);

@@ -1,8 +1,5 @@
 package ro.utcn.sd.he.assignment1.persistence.api;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import ro.utcn.sd.he.assignment1.model.Tag;
 
 import java.util.List;

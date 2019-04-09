@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JdbcQuestionRepository implements QuestionRepository {
     private final JdbcTemplate template;
-    private RowMapper<Question> mapper = ((resultSet, i) -> new Question(resultSet.getInt("id"),
+    private final RowMapper<Question> mapper = ((resultSet, i) -> new Question(resultSet.getInt("id"),
             resultSet.getString("author"),
             resultSet.getString("title"),
             resultSet.getString("text"),
@@ -24,9 +24,9 @@ public class JdbcQuestionRepository implements QuestionRepository {
 
     @Override
     public Question save(Question question) {
-        if(question.getId() != 0){
+        if (question.getId() != 0) {
             update(question);
-        }else {
+        } else {
             int id = insert(question);
             question.setId(id);
         }
@@ -36,8 +36,8 @@ public class JdbcQuestionRepository implements QuestionRepository {
     @Override
     public Optional<Question> findById(int id) {
         List<Question> questions = template.query("SELECT * FROM question WHERE id = ?",
-                    new Object[] {id},
-                    mapper);
+                new Object[]{id},
+                mapper);
 
 
         return questions.isEmpty() ? Optional.empty() : Optional.of(questions.get(0));
@@ -56,11 +56,11 @@ public class JdbcQuestionRepository implements QuestionRepository {
 
     }
 
-    private int insert(Question question){
+    private int insert(Question question) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(template);
         insert.setTableName("question");
         insert.setGeneratedKeyName("id");
-        Map<String, Object> data= new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
         data.put("title", question.getTitle());
         data.put("author", question.getAuthor());
         data.put("text", question.getText());
@@ -68,7 +68,7 @@ public class JdbcQuestionRepository implements QuestionRepository {
         return insert.executeAndReturnKey(data).intValue();
     }
 
-    private void update(Question question){
+    private void update(Question question) {
         template.update("UPDATE question SET title = ?, text = ?, author = ?, creation_date_time = ? Where id = ?",
                 question.getTitle(), question.getText(), question.getAuthor(), question.getCreation_date_time(), question.getId());
     }

@@ -10,8 +10,6 @@ import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.model.User;
 import ro.utcn.sd.he.assignment1.persistence.api.UserRepository;
 
-import javax.swing.text.html.Option;
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +31,13 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User getAuthorOf(Answer answer) {
         String username = answer.getAuthor();
-        User user = findByUsername(username).get();
-        return user;
+        return findByUsername(username).get();
 
     }
 
     @Override
     public User save(User user) {
-        if(user.getId() == 0){      //new user
+        if (user.getId() == 0) {      //new user
             int id = insert(user);
             user.setId(id);
         } else {
@@ -51,10 +48,10 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findByID(int id) {
-        List<User> users =  template.query("SELECT * FROM user WHERE id = ?",
+        List<User> users = template.query("SELECT * FROM user WHERE id = ?",
                 rowMapper,
                 id);
-        return users.isEmpty()? Optional.empty() : Optional.of(users.get(0));
+        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
     }
 
     @Override
@@ -69,8 +66,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User getAuthorOf(Question question) {
         String username = question.getAuthor();
-        User user =  findByUsername( username).get();
-        return user;
+        return findByUsername(username).get();
     }
 
     @Override
@@ -85,12 +81,12 @@ public class JdbcUserRepository implements UserRepository {
                         resultSet.getInt("score")
                 ),
                 username);
-        return user.isEmpty()? Optional.empty() : Optional.of(user.get(0));
+        return user.isEmpty() ? Optional.empty() : Optional.of(user.get(0));
     }
 
     @Override
     public List<User> findALL() {
-        List<User> users =  template.query("SELECT * FROM user",
+        return template.query("SELECT * FROM user",
                 (resultSet, i) -> new User(
                         resultSet.getInt("id"),
                         resultSet.getString("username"),
@@ -99,10 +95,9 @@ public class JdbcUserRepository implements UserRepository {
                         resultSet.getBoolean("banned"),
                         resultSet.getInt("score")
                 ));
-        return users;
     }
 
-    private int insert(User user){
+    private int insert(User user) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(template);
         insert.setTableName("user");
         insert.setGeneratedKeyName("id");
@@ -115,7 +110,7 @@ public class JdbcUserRepository implements UserRepository {
         return insert.executeAndReturnKey(data).intValue();
     }
 
-    private void update(User user){
+    private void update(User user) {
         template.update("UPDATE user SET username = ?, password = ?, type = ?, banned = ?, score = ? where id = ?",
                 user.getUsername(),
                 user.getPassword(),

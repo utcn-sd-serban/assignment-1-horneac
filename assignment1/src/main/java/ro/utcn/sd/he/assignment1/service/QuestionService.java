@@ -17,14 +17,15 @@ public class QuestionService {
 
     @Transactional
     public List<Question> listQuestions() {
-        List<Question> questions =  factory.createQuestionRepository().findAll();
+        List<Question> questions = factory.createQuestionRepository().findAll();
         questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());
         return questions;
     }
+
     @Transactional
     public Question findById(int id) {
         Optional<Question> question = factory.createQuestionRepository().findById(id);
-        return question.isPresent()? question.get() : null;
+        return question.orElse(null);
     }
 
     /*

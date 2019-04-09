@@ -15,6 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VoteService {
     private final RepositoryFactory factory;
+    private final AnswerService answerService;
+    private final QuestionService questionService;
 
     @Transactional
     public Vote save(Vote vote) {
@@ -39,6 +41,34 @@ public class VoteService {
     @Transactional
     public List<Vote> getVotesOfAnswer(Answer answer) {
         return factory.createVoteRepository().getVotesOfAnswer(answer);
+    }
+
+    @Transactional
+    public boolean vote(int type, String post, int postId, User currentUser) {
+        if (post.equals("question")) {
+            Question question = questionService.findById(postId);
+            if (type != +1) {
+                if (type == -1) {
+                    voteDown(currentUser, question);
+                } else {
+                    return false;
+                }
+            } else {
+                voteUp(currentUser, question);
+            }
+        } else if (post.equals("answer")) {
+            Answer answer = answerService.findById(postId);
+            if (type == +1) {
+                voteUp(currentUser, answer);
+            } else if (type == -1) {
+                voteDown(currentUser, answer);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
     }
 
     @Transactional
@@ -69,6 +99,7 @@ public class VoteService {
             return vote;
         }
     }
+
 
     @Transactional
     public Vote voteDown(User user, Question question) {

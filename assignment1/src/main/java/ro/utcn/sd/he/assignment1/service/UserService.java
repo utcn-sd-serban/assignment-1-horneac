@@ -18,29 +18,37 @@ public class UserService {
     private final RepositoryFactory factory;
 
     @Transactional
-    public List<User> listUsers(){
+    public List<User> listUsers() {
         UserRepository repo = factory.createUserRepository();
         return repo.findALL();
     }
 
     @Transactional
-    public User saveUser(User user){
+    public User saveUser(User user) {
         return factory.createUserRepository().save(user);
     }
 
     @Transactional
-    public void deleteUser(int id){
+    public void deleteUser(int id) {
         Optional<User> user = factory.createUserRepository().findByID(id);
         factory.createUserRepository().remove(user.get());
     }
 
     @Transactional
-    public User logIn(String username, String password){
+    public User register(String username, String password) {
+        User user = new User(0, username, password, "user", false, 0);
+        user = saveUser(user);
+        return user;
+
+    }
+
+    @Transactional
+    public User logIn(String username, String password) {
         Optional<User> user = factory.createUserRepository().findByUsername(username);
-        if(!user.isPresent()){
+        if (!user.isPresent()) {
             return null;
         }
-        if(password.equals(user.get().getPassword())){
+        if (password.equals(user.get().getPassword())) {
             return user.get();
         } else {
             return null;
@@ -48,13 +56,12 @@ public class UserService {
     }
 
     @Transactional
-    public User getAuthorOf(Object post){
-        if( post.getClass().getSimpleName().equals("Answer")){
+    public User getAuthorOf(Object post) {
+        if (post.getClass().getSimpleName().equals("Answer")) {
             return factory.createUserRepository().getAuthorOf((Answer) post);
-        }else if( post.getClass().getSimpleName().equals("Question")){
+        } else if (post.getClass().getSimpleName().equals("Question")) {
             return factory.createUserRepository().getAuthorOf((Question) post);
-        }
-        else{
+        } else {
             System.out.println("You can only get the author of an answer or question post!");
             return null;
         }

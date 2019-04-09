@@ -25,12 +25,12 @@ public class CommandLineController implements CommandLineRunner {
     private final AnswerService answerService;
     private final VoteService voteService;
     private User user;
-    Scanner scanner = new Scanner(System.in);
+    final Scanner scanner = new Scanner(System.in);
 
     @Override
-    public void run(String... args){
+    public void run(String... args) {
         boolean done = false;
-        while(!done){
+        while (!done) {
             print("Enter command:");
             String command = scanner.next().trim();
             scanner.nextLine();     //dump the line
@@ -41,31 +41,31 @@ public class CommandLineController implements CommandLineRunner {
     }
 
 
-    private boolean handleCommand(String command){
-        switch(command){
+    private boolean handleCommand(String command) {
+        switch (command) {
             case "search":
                 handleSearch();
                 return false;
             case "list":
                 List<Question> questions = questionService.listQuestions();
-                for(Question q : questions){
+                for (Question q : questions) {
                     print(q.toString());
                 }
                 return false;
 
             case "login":
-                if(isLogged()){
+                if (isLogged()) {
                     print("you are already logged in.");
                 } else {
                     handleLogin();
                 }
                 return false;
 
-            case"vote":
+            case "vote":
                 handleVote();
                 return false;
-            case"logout":
-                if(isLogged()){
+            case "logout":
+                if (isLogged()) {
                     user = null;
                     print("Logged out");
                 } else {
@@ -82,7 +82,7 @@ public class CommandLineController implements CommandLineRunner {
                 return true;
 
             case "whoami":
-                if(user == null){
+                if (user == null) {
                     print("You are not logged in");
                 } else {
                     print("Username" + user.getUsername());
@@ -119,56 +119,54 @@ public class CommandLineController implements CommandLineRunner {
 
     }
 
-    private void handleListAnswers(){
-        answerService.findAllAnswers().forEach( a -> print(a.toString()));
+    private void handleListAnswers() {
+        answerService.findAllAnswers().forEach(a -> print(a.toString()));
     }
 
-    private void handleEdit(){
-        if(isLogged()){
+    private void handleEdit() {
+        if (isLogged()) {
             print("What answer do you want to edit (id):");
             int answerId = scanner.nextInt();
             scanner.nextLine(); //dump remaining line
-            Answer answer = answerService.findById(answerId);
-            if(userService.getAuthorOf(answer).getUsername().equals(user.getUsername())){
-                print("New text:");
-                String text = scanner.nextLine();
-                answer.setText(text);           //TODO when it is edited, should i change the creation time? or add last edited time?
-                answerService.saveAnswer(answer);
+            print("New text:");
+            String text = scanner.nextLine();
+            if (answerService.editAnswer(answerId, text, user)) {
+                print("answer edited succesfully");
             } else {
-                print("You can edit only your own questions!");
+                print("Answer can not be edited");
             }
+
         } else {
             print("You need to be logged in to edit an answer!");
         }
     }
 
 
-    private void handleRegister(){
+    private void handleRegister() {
         print("enter the username you want to login with:");
         String username = scanner.next().trim();
         scanner.nextLine();
         print("enter a stronk password:");
         String password = scanner.next().trim();
         scanner.nextLine();
-        User user = new User(0,username,password,"user",false,0);
-        user = userService.saveUser(user);
+        user = userService.register(username, password);
         print("Registered succesfully:\n" + user.toString());
     }
 
-    public void handleDeleteAnswer(){
+    public void handleDeleteAnswer() {
         print("What answer(id) you want to delete:");
         int id = scanner.nextInt();
         scanner.nextLine();
         answerService.deleteAnswer(id);
     }
 
-    public void handleVote(){
-        if(user == null){
+    public void handleVote() {
+        if (user == null) {
             print("you need to be logged in to vote!");
             return;
         }
         print("question or answer?");
-        String type = scanner.next().trim();
+        String post = scanner.next().trim();
         scanner.nextLine(); //drop remaining line
         print("insert the id of the post you want to vote:");
         int id = scanner.nextInt();
@@ -176,39 +174,22 @@ public class CommandLineController implements CommandLineRunner {
         print("+1 or -1?");
         int vote = scanner.nextInt();
         scanner.nextLine();
-        if(type.equals("question")){
-            Question question = questionService.findById(id);
-            if(vote == +1){
-                voteService.voteUp(user, question);
-            }
-            else if(vote == -1){
-                voteService.voteDown(user,question);
-            } else {
-                print("invalid vote option");
-            }
-        } else if ( type.equals("answer")){
-            Answer answer = answerService.findById(id);
-            if(vote == +1){
-                voteService.voteUp(user, answer);
-            }
-            else if(vote == -1){
-                voteService.voteDown(user,answer);
-            } else {
-                print("invalid vote option");
-            }
+        if (voteService.vote(vote, post, id, user)) {
+            print("Post voted succesfully");
         } else {
-            print("You can only vote a question or an answer");
+            print(" Could not process vote");
         }
+
     }
 
-    private void handleShow(){
+    private void handleShow() {
         print("Select question(id):");
         int questionId = scanner.nextInt();
         Question question = questionService.findById(questionId);
-        if(question != null){
+        if (question != null) {
             List<Answer> answers = answerService.findAnswersOf(question);
             print(question.toString() + "Votes: " + voteService.getVoteCount(question));
-            for(Answer a : answers){
+            for (Answer a : answers) {
                 print("\t" + a.toString() + "Votes: " + voteService.getVoteCount(a));
             }
 
@@ -218,43 +199,43 @@ public class CommandLineController implements CommandLineRunner {
 
     }
 
-    private void handleAnswer(){
-        if (isLogged()){
+    private void handleAnswer() {
+        if (isLogged()) {
             print("what question(id) do you want to answer:");
             int questionId = scanner.nextInt();
             scanner.nextLine(); //dump line
             print("give your answer:");
             String text = scanner.nextLine();
-            answerService.saveAnswer(new Answer(0,user.getUsername(),text, new Timestamp(System.currentTimeMillis()),questionId));
+            answerService.saveAnswer(new Answer(0, user.getUsername(), text, new Timestamp(System.currentTimeMillis()), questionId));
 
         } else {
             print("You need to login to answer a question");
         }
     }
 
-    private void handleSearch(){
+    private void handleSearch() {
         print("what search criteria you want to use(title/tags):");
         String criteria = scanner.next().trim();
         scanner.nextLine();
-        if(criteria.equals("title")){
+        if (criteria.equals("title")) {
             print("Enter title to search:");
             String title = scanner.nextLine();
             List<Question> questions = questionService.listQuestions();
-            questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());;
-            questions.forEach( question -> {
-                if(question.getTitle().toLowerCase().indexOf(title.toLowerCase()) > -1){
+            questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());
+            questions.forEach(question -> {
+                if (question.getTitle().toLowerCase().contains(title.toLowerCase())) {
                     print(question.toString());
                 }
             });
-        }else if (criteria.equals("tags")){
+        } else if (criteria.equals("tags")) {
             print("enter tag:");
-            Integer i = new Integer(0);
+            Integer i = 0;
             String tagName = scanner.next().trim();
             Tag tag = tagService.getTag(tagName);
-            List<Question> questions =  questionTagService.getQuestionsWithTag(tag);
-            if(questions.isEmpty()){
+            List<Question> questions = questionTagService.getQuestionsWithTag(tag);
+            if (questions.isEmpty()) {
                 print("No questions found with the given tag");
-            }else{
+            } else {
                 questions.forEach(question -> print(question.toString()));
             }
 
@@ -263,18 +244,18 @@ public class CommandLineController implements CommandLineRunner {
         }
     }
 
-    private void handleAdd(){
-        if(isLogged()){
+    private void handleAdd() {
+        if (isLogged()) {
             print("enter the title:");
             String title = scanner.nextLine();
             print("enter the text:");
             String text = scanner.nextLine();
             print("Enter some tags:");
             String[] tags = scanner.nextLine().split(" ");
-            Question question = questionService.saveQuestion(new Question(0,user.getUsername(),title,text,new Timestamp(System.currentTimeMillis())));
-            for(String s: tags){
+            Question question = questionService.saveQuestion(new Question(0, user.getUsername(), title, text, new Timestamp(System.currentTimeMillis())));
+            for (String s : tags) {
                 Tag tag = tagService.saveTag(new Tag(0, s));
-                questionTagService.save(question,tag);
+                questionTagService.save(question, tag);
             }
             print("Created question: " + question + ".");
         } else {
@@ -283,32 +264,32 @@ public class CommandLineController implements CommandLineRunner {
 
     }
 
-    private void handleDelete(){
+    private void handleDelete() {
         print("Enter the id of the question you want to delete: ");
         int id = scanner.nextInt();
         scanner.nextLine();
         questionService.deleteQuestion(id);
     }
 
-    private void handleLogin(){
+    private void handleLogin() {
         print("Username:");
         String username = scanner.next().trim();
         print("password:");
         String password = scanner.next().trim();
-        user = userService.logIn(username,password);
-        if(user == null){
+        user = userService.logIn(username, password);
+        if (user == null) {
             print("wrond username or password");
-        } else{
+        } else {
             print(user.getUsername() + " connected succesfully");
         }
 
     }
 
-    private boolean isLogged(){
+    private boolean isLogged() {
         return user != null;
     }
 
-    private void print(String s){
+    private void print(String s) {
         System.out.println(s);
     }
 }

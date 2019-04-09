@@ -10,6 +10,7 @@ public interface QuestionTagRepository {
     void insert(Question question, Tag tag);
 
     void remove(Question question, Tag tag);
+
     List<Question> getQuestionsWithTag(Tag tag);
 
     List<Tag> getTagsOfQuestion(Question question);

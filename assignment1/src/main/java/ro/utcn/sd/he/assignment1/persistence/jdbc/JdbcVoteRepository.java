@@ -17,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JdbcVoteRepository implements VoteRepository {
     private final JdbcTemplate template;
-    private RowMapper<Vote> rowMapper = ((resultSet, i) -> new Vote(
+    private final RowMapper<Vote> rowMapper = ((resultSet, i) -> new Vote(
             resultSet.getInt("id"),
             resultSet.getInt("type"),
             resultSet.getInt("userID"),
@@ -27,10 +27,10 @@ public class JdbcVoteRepository implements VoteRepository {
 
     @Override
     public Vote findVote(User user, Question question) {
-       List<Vote> votes = template.query("SELECT * FROM vote WHERE questionID = ? and userID = ?",rowMapper,question.getId(),user.getId());
-        if(votes.size() == 0){
+        List<Vote> votes = template.query("SELECT * FROM vote WHERE questionID = ? and userID = ?", rowMapper, question.getId(), user.getId());
+        if (votes.size() == 0) {
             return null;
-        }else {
+        } else {
             return votes.get(0);
         }
 
@@ -38,8 +38,8 @@ public class JdbcVoteRepository implements VoteRepository {
 
     @Override
     public Vote findVote(User user, Answer answer) {
-        List<Vote> votes =  template.query("SELECT * FROM vote WHERE answerID = ? and userID = ?",rowMapper,answer.getId(),user.getId());
-        if(votes.size() == 0){
+        List<Vote> votes = template.query("SELECT * FROM vote WHERE answerID = ? and userID = ?", rowMapper, answer.getId(), user.getId());
+        if (votes.size() == 0) {
             return null;
         } else {
             return votes.get(0);
@@ -64,30 +64,25 @@ public class JdbcVoteRepository implements VoteRepository {
 
     @Override
     public List<Vote> getVotesOfUser(User user) {
-        List<Vote> votes = template.query("SELECT * FROM vote JOIN user on vote.userID = user.id where user.id = ?", rowMapper, user.getId());
-        return votes;
+        return template.query("SELECT * FROM vote JOIN user on vote.userID = user.id where user.id = ?", rowMapper, user.getId());
     }
 
     @Override
     public List<Vote> getVotesOfQuestion(Question question) {
-        List<Vote> votes = template.query("SELECT * FROM vote WHERE questionID = ?", rowMapper, question.getId());
-        return votes;
+        return template.query("SELECT * FROM vote WHERE questionID = ?", rowMapper, question.getId());
     }
 
     @Override
     public List<Vote> getVotesOfAnswer(Answer answer) {
-        List<Vote> votes = template.query("SELECT * FROM vote WHERE answerID = ?", rowMapper, answer.getId());
-        return votes;
+        return template.query("SELECT * FROM vote WHERE answerID = ?", rowMapper, answer.getId());
     }
 
     public int getVoteCount(Question question) {
-        int voteCount = template.query("SELECT sum(type) as votecount FROM vote WHERE questionID = ?", (resultSet, i) -> resultSet.getInt(("votecount")), question.getId()).get(0);
-        return voteCount;
+        return template.query("SELECT sum(type) as votecount FROM vote WHERE questionID = ?", (resultSet, i) -> resultSet.getInt(("votecount")), question.getId()).get(0);
     }
 
     public int getVoteCount(Answer answer) {
-        int voteCount = template.query("SELECT sum(type) as votecount FROM vote WHERE answerID = ?", (resultSet, i) -> resultSet.getInt(("votecount")), answer.getId()).get(0);
-        return voteCount;
+        return template.query("SELECT sum(type) as votecount FROM vote WHERE answerID = ?", (resultSet, i) -> resultSet.getInt(("votecount")), answer.getId()).get(0);
     }
 
 
@@ -95,7 +90,7 @@ public class JdbcVoteRepository implements VoteRepository {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(template);
         insert.setTableName("vote");
         insert.setGeneratedKeyName("id");
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("type", vote.getType());
         data.put("userID", vote.getUserID());
         data.put("questionID", vote.getQuestionID());
@@ -105,6 +100,6 @@ public class JdbcVoteRepository implements VoteRepository {
 
     private void update(Vote vote) {
         template.update("UPDATE vote set type = ?, userID = ?, questionID = ?, answerID = ? WHERE id = ?",
-                vote.getType(), vote.getUserID(), vote.getQuestionID() == 0? null : vote.getQuestionID(), vote.getAnswerID() == 0 ? null : vote.getAnswerID(), vote.getId());
+                vote.getType(), vote.getUserID(), vote.getQuestionID() == 0 ? null : vote.getQuestionID(), vote.getAnswerID() == 0 ? null : vote.getAnswerID(), vote.getId());
     }
 }

@@ -37,8 +37,7 @@ public class HibernateVoteRepository implements VoteRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(Vote.class);
         Root<Vote> voteRoot = criteriaQuery.from(Vote.class);
-        List<Vote> votes = entityManager.createQuery(criteriaQuery.select(voteRoot).where(criteriaBuilder.equal(voteRoot.get("userID"), user.getId()))).getResultList();
-        return votes;
+        return (List<Vote>) entityManager.createQuery(criteriaQuery.select(voteRoot).where(criteriaBuilder.equal(voteRoot.get("userID"), user.getId()))).getResultList();
     }
 
     @Override
@@ -46,8 +45,7 @@ public class HibernateVoteRepository implements VoteRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(Vote.class);
         Root<Vote> voteRoot = criteriaQuery.from(Vote.class);
-        List<Vote> votes = entityManager.createQuery(criteriaQuery.select(voteRoot).where(criteriaBuilder.equal(voteRoot.get("questionID"), question.getId()))).getResultList();
-        return votes;
+        return (List<Vote>) entityManager.createQuery(criteriaQuery.select(voteRoot).where(criteriaBuilder.equal(voteRoot.get("questionID"), question.getId()))).getResultList();
     }
 
     @Override
@@ -55,8 +53,7 @@ public class HibernateVoteRepository implements VoteRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(Vote.class);
         Root<Vote> voteRoot = criteriaQuery.from(Vote.class);
-        List<Vote> votes = entityManager.createQuery(criteriaQuery.select(voteRoot).where(criteriaBuilder.equal(voteRoot.get("answerID"), answer.getId()))).getResultList();
-        return votes;
+        return (List<Vote>) entityManager.createQuery(criteriaQuery.select(voteRoot).where(criteriaBuilder.equal(voteRoot.get("answerID"), answer.getId()))).getResultList();
     }
 
     @Override
@@ -67,8 +64,7 @@ public class HibernateVoteRepository implements VoteRepository {
         Root<Vote> voteRoot = criteriaQuery.from(Vote.class);
         criteriaQuery.select(criteriaBuilder.sum(voteRoot.get("type"))).where(criteriaBuilder.equal(voteRoot.get("questionID"), question.getId()));
         Object result = entityManager.createQuery(criteriaQuery).getSingleResult();
-        int votes = result == null? 0 : (int) result;
-        return votes;
+        return result == null ? 0 : (int) result;
     }
 
     @Override
@@ -79,8 +75,7 @@ public class HibernateVoteRepository implements VoteRepository {
         Root<Vote> voteRoot = criteriaQuery.from(Vote.class);
         criteriaQuery.select(criteriaBuilder.sum(voteRoot.get("type"))).where(criteriaBuilder.equal(voteRoot.get("answerID"), answer.getId()));
         Object result = entityManager.createQuery(criteriaQuery).getSingleResult();
-        int votes = result == null ? 0 : (int) result;
-        return votes;
+        return result == null ? 0 : (int) result;
     }
 
     @Override

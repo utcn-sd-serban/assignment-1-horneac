@@ -20,13 +20,13 @@ public class QuestionSeed implements CommandLineRunner {
 
     @Override
     @Transactional
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         QuestionRepository repository = factory.createQuestionRepository();
-        if(repository.findAll().isEmpty()){
-            repository.save(new Question(0,"Emanuel","title1", "Cum se face tema la SD" , new Timestamp(System.currentTimeMillis())));
-            repository.save(new Question(0,"Alexandra","title2", "Cum se face tema la SCS" , new Timestamp(System.currentTimeMillis())));
-            repository.save(new Question(0,"Paul","title3", "Cum se face tema la IS" , new Timestamp(System.currentTimeMillis())));
-            repository.save(new Question(0,"Zbona","title4", "Cum se face tema la ...." , new Timestamp(System.currentTimeMillis())));
+        if (repository.findAll().isEmpty()) {
+            repository.save(new Question(0, "Emanuel", "title1", "Cum se face tema la SD", new Timestamp(System.currentTimeMillis())));
+            repository.save(new Question(0, "Alexandra", "title2", "Cum se face tema la SCS", new Timestamp(System.currentTimeMillis())));
+            repository.save(new Question(0, "Paul", "title3", "Cum se face tema la IS", new Timestamp(System.currentTimeMillis())));
+            repository.save(new Question(0, "Zbona", "title4", "Cum se face tema la ....", new Timestamp(System.currentTimeMillis())));
         }
     }
 }

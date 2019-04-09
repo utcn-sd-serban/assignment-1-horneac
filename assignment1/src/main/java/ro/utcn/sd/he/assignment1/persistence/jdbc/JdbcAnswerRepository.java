@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JdbcAnswerRepository implements AnswerRepository {
     private final JdbcTemplate template;
-    private RowMapper<Answer> rowMapper = ((resultSet, i) -> new Answer(
+    private final RowMapper<Answer> rowMapper = ((resultSet, i) -> new Answer(
             resultSet.getInt("answer.id"),
             resultSet.getString("answer.author"),
             resultSet.getString("answer.text"),
@@ -26,7 +26,7 @@ public class JdbcAnswerRepository implements AnswerRepository {
 
     @Override
     public Answer save(Answer answer) {
-        if(answer.getId() == 0){
+        if (answer.getId() == 0) {
             int id = insert(answer);
             answer.setId(id);
         } else {
@@ -43,8 +43,7 @@ public class JdbcAnswerRepository implements AnswerRepository {
 
     @Override
     public List<Answer> getAnswersOf(Question question) {
-        List<Answer> answers = template.query("SELECT * FROM question JOIN answer on question.id = answer.questionID WHERE question.id = ?", rowMapper, question.getId());
-        return answers;
+        return template.query("SELECT * FROM question JOIN answer on question.id = answer.questionID WHERE question.id = ?", rowMapper, question.getId());
     }
 
     @Override
@@ -54,26 +53,24 @@ public class JdbcAnswerRepository implements AnswerRepository {
 
     @Override
     public List<Answer> findAll() {
-        List<Answer> answers = template.query("SELECT * FROM answer",
+        return template.query("SELECT * FROM answer",
                 rowMapper);
-        return answers;
     }
 
-    private int insert(Answer answer){
+    private int insert(Answer answer) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(template);
         insert.setTableName("Answer");
         insert.setGeneratedKeyName("id");
-        Map<String,Object> data = new HashMap<String,Object>();
-        data.put("author",answer.getAuthor());
+        Map<String, Object> data = new HashMap<>();
+        data.put("author", answer.getAuthor());
         data.put("text", answer.getText());
         data.put("creation_date_time", answer.getCreation_date_time());
-        data.put("questionID",answer.getQuestionId());
-        int id = insert.executeAndReturnKey(data).intValue();
-        return id;
+        data.put("questionID", answer.getQuestionId());
+        return insert.executeAndReturnKey(data).intValue();
     }
 
-    private void update(Answer answer){
+    private void update(Answer answer) {
         template.update("UPDATE answer SET author = ?, text = ?, creation_date_time = ?, questionID = ? WHERE id = ?",
-                answer.getAuthor(),answer.getText(),answer.getCreation_date_time(),answer.getQuestionId(),answer.getId());
+                answer.getAuthor(), answer.getText(), answer.getCreation_date_time(), answer.getQuestionId(), answer.getId());
     }
 }

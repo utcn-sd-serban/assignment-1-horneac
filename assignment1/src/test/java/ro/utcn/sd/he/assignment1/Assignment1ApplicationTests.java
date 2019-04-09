@@ -16,9 +16,9 @@ import java.util.List;
 public class Assignment1ApplicationTests {
 
 
-    private QuestionService questionService = new QuestionService(new InMemoryRepositoryFactory());
-    private VoteService voteService = new VoteService(new InMemoryRepositoryFactory());
-    private UserService userService = new UserService(new InMemoryRepositoryFactory());
+    private final QuestionService questionService = new QuestionService(new InMemoryRepositoryFactory());
+    private final VoteService voteService = new VoteService(new InMemoryRepositoryFactory());
+    private final UserService userService = new UserService(new InMemoryRepositoryFactory());
 
     @Before
     public void programSeed() {
@@ -56,14 +56,14 @@ public class Assignment1ApplicationTests {
     }
 
     @Test
-    public void voteTestSameUser(){
+    public void voteTestSameUser() {
         User user = userService.listUsers().get(0);
         Question question = questionService.findById(2);
-        voteService.voteUp(user,question);
-        voteService.voteUp(user,question);
-        voteService.voteUp(user,question);
-        voteService.voteUp(user,question);
-        voteService.voteDown(user,question);
+        voteService.voteUp(user, question);
+        voteService.voteUp(user, question);
+        voteService.voteUp(user, question);
+        voteService.voteUp(user, question);
+        voteService.voteDown(user, question);
 
         Assert.assertEquals(-1, voteService.getVoteCount(question));
     }

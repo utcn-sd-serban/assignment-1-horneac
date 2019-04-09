@@ -14,12 +14,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryVoteRepository implements VoteRepository {
     private final Map<Integer, Vote> repo = new ConcurrentHashMap<>();
-    private AtomicInteger currentId = new AtomicInteger(1);
+    private final AtomicInteger currentId = new AtomicInteger(1);
 
     @Override
     public Vote findVote(User user, Question question) {
-        for(Vote vote : repo.values()){
-            if(vote.getQuestionID() == question.getId() & vote.getUserID() == user.getId()){
+        for (Vote vote : repo.values()) {
+            if (vote.getQuestionID() == question.getId() & vote.getUserID() == user.getId()) {
                 return vote;
             }
         }
@@ -28,8 +28,8 @@ public class InMemoryVoteRepository implements VoteRepository {
 
     @Override
     public Vote findVote(User user, Answer answer) {
-        for(Vote vote : repo.values()){
-            if(vote.getAnswerID() == answer.getId() & vote.getUserID() == user.getId()){
+        for (Vote vote : repo.values()) {
+            if (vote.getAnswerID() == answer.getId() & vote.getUserID() == user.getId()) {
                 return vote;
             }
         }

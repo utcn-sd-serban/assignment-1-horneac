@@ -17,22 +17,22 @@ public class QuestionTagService {
     private final RepositoryFactory factory;
 
     @Transactional
-    public List<Question> getQuestionsWithTag(Tag tag){
+    public List<Question> getQuestionsWithTag(Tag tag) {
         return factory.createQuestionTagRepository().getQuestionsWithTag(tag);
     }
 
     @Transactional
-    public List<Tag> getTagsOfQuestion(Question question){
+    public List<Tag> getTagsOfQuestion(Question question) {
         return factory.createQuestionTagRepository().getTagsOfQuestion(question);
     }
 
     @Transactional
-    public void save(Question question, Tag tag){
-        factory.createQuestionTagRepository().insert(question,tag);
+    public void save(Question question, Tag tag) {
+        factory.createQuestionTagRepository().insert(question, tag);
     }
 
     @Transactional
-    public void remove(Question question, Tag tag){
+    public void remove(Question question, Tag tag) {
         factory.createQuestionTagRepository().remove(question, tag);
     }
 

@@ -15,10 +15,9 @@ public class TagService {
     private final RepositoryFactory factory;
 
     @Transactional
-    public Tag saveTag(Tag tag){
+    public Tag saveTag(Tag tag) {
         Optional<Tag> foundTag = factory.createTagRepository().findByName(tag.getName());
-        if(foundTag.isPresent())
-        {
+        if (foundTag.isPresent()) {
             return foundTag.get();
         } else {
             tag = factory.createTagRepository().save(tag);
@@ -27,13 +26,13 @@ public class TagService {
     }
 
     @Transactional
-    public Tag getTag(String name){
+    public Tag getTag(String name) {
         Optional<Tag> tag = factory.createTagRepository().findByName(name);
-        return tag.isPresent()?tag.get():new Tag(0,"");
+        return tag.isPresent() ? tag.get() : new Tag(0, "");
     }
 
     @Transactional
-    public List<Tag> listTags(){
+    public List<Tag> listTags() {
         return factory.createTagRepository().findAll();
     }
 
