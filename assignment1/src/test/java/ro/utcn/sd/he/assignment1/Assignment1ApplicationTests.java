@@ -6,6 +6,7 @@ import org.junit.Test;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.model.User;
 import ro.utcn.sd.he.assignment1.persistence.memory.InMemoryRepositoryFactory;
+import ro.utcn.sd.he.assignment1.service.AnswerService;
 import ro.utcn.sd.he.assignment1.service.QuestionService;
 import ro.utcn.sd.he.assignment1.service.UserService;
 import ro.utcn.sd.he.assignment1.service.VoteService;
@@ -17,7 +18,7 @@ public class Assignment1ApplicationTests {
 
 
     private final QuestionService questionService = new QuestionService(new InMemoryRepositoryFactory());
-    private final VoteService voteService = new VoteService(new InMemoryRepositoryFactory());
+    private final VoteService voteService = new VoteService(new InMemoryRepositoryFactory(), new AnswerService(new InMemoryRepositoryFactory()), new QuestionService(new InMemoryRepositoryFactory()));
     private final UserService userService = new UserService(new InMemoryRepositoryFactory());
 
     @Before

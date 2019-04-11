@@ -47,24 +47,34 @@ public class VoteService {
     public boolean vote(int type, String post, int postId, User currentUser) {
         if (post.equals("question")) {
             Question question = questionService.findById(postId);
-            if (type != +1) {
-                if (type == -1) {
-                    voteDown(currentUser, question);
+            if (!question.getAuthor().equals(currentUser.getUsername())) {
+                if (type != +1) {
+                    if (type == -1) {
+                        voteDown(currentUser, question);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    voteUp(currentUser, question);
+                }
+            } else {
+                return false;
+            }
+
+        } else if (post.equals("answer")) {
+            Answer answer = answerService.findById(postId);
+            if (!answer.getAuthor().equals(currentUser.getUsername())) {
+                if (type == +1) {
+                    voteUp(currentUser, answer);
+                } else if (type == -1) {
+                    voteDown(currentUser, answer);
                 } else {
                     return false;
                 }
             } else {
-                voteUp(currentUser, question);
-            }
-        } else if (post.equals("answer")) {
-            Answer answer = answerService.findById(postId);
-            if (type == +1) {
-                voteUp(currentUser, answer);
-            } else if (type == -1) {
-                voteDown(currentUser, answer);
-            } else {
                 return false;
             }
+
         } else {
             return false;
         }
