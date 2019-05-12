@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +29,17 @@ public class QuestionService {
         return question.orElse(null);
     }
 
-    /*
+    @Transactional
+    public List<Question> searchTitle(String title) {
+        List<Question> questions = listQuestions().stream()
+                .filter((q1) -> q1.getTitle().contains(title))
+                .collect(Collectors.toList());
+        return questions;
+    }
 
+
+
+    /*
     @param question -> a question object to save in the repository
      */
     @Transactional

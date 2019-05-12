@@ -7,7 +7,7 @@ CREATE TABLE `tag` (
   CREATE TABLE `user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
   `type` VARCHAR(45) NOT NULL,
   `banned` BIT NULL,
   `score` INT NOT NULL,

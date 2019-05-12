@@ -2,6 +2,7 @@ package ro.utcn.sd.he.assignment1.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ro.utcn.sd.he.assignment1.dto.UserDTO;
 import ro.utcn.sd.he.assignment1.model.Answer;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.model.User;
@@ -11,6 +12,7 @@ import ro.utcn.sd.he.assignment1.persistence.api.UserRepository;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -18,9 +20,21 @@ public class UserService {
     private final RepositoryFactory factory;
 
     @Transactional
-    public List<User> listUsers() {
+    public List<UserDTO> listUsers() {
         UserRepository repo = factory.createUserRepository();
-        return repo.findALL();
+        return repo.findALL().stream().map(UserDTO::ofEntity).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public UserDTO saveUser(UserDTO userDTO) {
+        User user = new User();
+        user.setId(userDTO.getId());
+        user.setUsername(userDTO.getUserName());
+        user.setPassword(userDTO.getPassword());
+        user.setScore(0);
+        user.setType("user");
+        user.setBanned(false);
+        return UserDTO.ofEntity(factory.createUserRepository().save(user));
     }
 
     @Transactional
@@ -34,13 +48,13 @@ public class UserService {
         factory.createUserRepository().remove(user.get());
     }
 
-    @Transactional
-    public User register(String username, String password) {
-        User user = new User(0, username, password, "user", false, 0);
-        user = saveUser(user);
-        return user;
-
-    }
+//    @Transactional
+//    public User register(String username, String password) {
+//        User user = new User(0, username, password, "user", false, 0);
+//        user = saveUser(user);
+//        return user;
+//
+//    }
 
     @Transactional
     public User logIn(String username, String password) {
