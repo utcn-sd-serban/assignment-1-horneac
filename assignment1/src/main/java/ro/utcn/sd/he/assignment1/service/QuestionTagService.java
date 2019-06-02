@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ro.utcn.sd.he.assignment1.command.AddQuestionCommand;
 import ro.utcn.sd.he.assignment1.dto.QuestionDTO;
+import ro.utcn.sd.he.assignment1.dto.QuestionVoteDTO;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.model.Tag;
 import ro.utcn.sd.he.assignment1.persistence.api.RepositoryFactory;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -51,9 +53,14 @@ public class QuestionTagService {
     }
 
     @Transactional
-    public List<Question> filterTag(String tag) {
+    public List<QuestionVoteDTO> filterTag(String tag) {
         Tag tagFound = tagService.getTag(tag);
-        return getQuestionsWithTag(tagFound);
+        List<Question> questions = getQuestionsWithTag(tagFound);
+        return questions.stream().map(question ->
+                QuestionVoteDTO.ofEntity(
+                        question,
+                        factory.createVoteRepository().getVoteCount(question))).collect(Collectors.toList());
+
     }
 
 }

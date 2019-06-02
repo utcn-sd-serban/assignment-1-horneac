@@ -70,6 +70,11 @@ public class UserService {
     }
 
     @Transactional
+    public User findByUsername(String username) {
+        return factory.createUserRepository().findByUsername(username).get();
+    }
+
+    @Transactional
     public User getAuthorOf(Object post) {
         if (post.getClass().getSimpleName().equals("Answer")) {
             return factory.createUserRepository().getAuthorOf((Answer) post);

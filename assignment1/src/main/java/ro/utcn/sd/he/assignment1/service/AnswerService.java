@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ro.utcn.sd.he.assignment1.command.AddAnswerCommand;
 import ro.utcn.sd.he.assignment1.command.DeleteAnswerCommand;
 import ro.utcn.sd.he.assignment1.command.EditAnswerCommand;
+import ro.utcn.sd.he.assignment1.dto.AnswerVoteDTO;
 import ro.utcn.sd.he.assignment1.model.Answer;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.persistence.api.RepositoryFactory;
@@ -12,6 +13,7 @@ import ro.utcn.sd.he.assignment1.persistence.api.RepositoryFactory;
 import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,10 +42,12 @@ public class AnswerService {
     }
 
     @Transactional
-    public List<Answer> findAnswersOf(Question question) {
+    public List<AnswerVoteDTO> findAnswersOf(Question question) {
         List<Answer> answers = factory.createAnswerRepository().getAnswersOf(question);
         answers.sort(new CustomComparator().reversed());
-        return answers;
+        return answers.stream().map(answer -> {
+            return AnswerVoteDTO.ofEntity(answer, factory.createVoteRepository().getVoteCount(answer));
+        }).collect(Collectors.toList());
     }
 
     @Transactional

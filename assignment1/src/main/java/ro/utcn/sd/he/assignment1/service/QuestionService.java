@@ -2,6 +2,7 @@ package ro.utcn.sd.he.assignment1.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ro.utcn.sd.he.assignment1.dto.QuestionVoteDTO;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.persistence.api.RepositoryFactory;
 
@@ -17,10 +18,14 @@ public class QuestionService {
     private final RepositoryFactory factory;
 
     @Transactional
-    public List<Question> listQuestions() {
+    public List<QuestionVoteDTO> listQuestions() {
         List<Question> questions = factory.createQuestionRepository().findAll();
         questions.sort(Comparator.comparing(Question::getCreation_date_time).reversed());
-        return questions;
+        return questions.stream().map(question ->
+                QuestionVoteDTO.ofEntity(
+                        question,
+                        factory.createVoteRepository().getVoteCount(question))).collect(Collectors.toList());
+
     }
 
     @Transactional
@@ -30,13 +35,12 @@ public class QuestionService {
     }
 
     @Transactional
-    public List<Question> searchTitle(String title) {
-        List<Question> questions = listQuestions().stream()
+    public List<QuestionVoteDTO> searchTitle(String title) {
+        List<QuestionVoteDTO> questions = listQuestions().stream()
                 .filter((q1) -> q1.getTitle().contains(title))
                 .collect(Collectors.toList());
         return questions;
     }
-
 
 
     /*

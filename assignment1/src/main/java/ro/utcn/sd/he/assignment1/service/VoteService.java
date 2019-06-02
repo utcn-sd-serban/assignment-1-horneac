@@ -43,6 +43,7 @@ public class VoteService {
         return factory.createVoteRepository().getVotesOfAnswer(answer);
     }
 
+
     @Transactional
     public boolean vote(int type, String post, int postId, User currentUser) {
         if (post.equals("question")) {
