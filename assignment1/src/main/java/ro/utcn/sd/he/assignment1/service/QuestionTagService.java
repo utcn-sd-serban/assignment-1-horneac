@@ -3,7 +3,6 @@ package ro.utcn.sd.he.assignment1.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ro.utcn.sd.he.assignment1.command.AddQuestionCommand;
-import ro.utcn.sd.he.assignment1.command.Command;
 import ro.utcn.sd.he.assignment1.dto.QuestionDTO;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.model.Tag;
@@ -40,7 +39,7 @@ public class QuestionTagService {
     }
 
     @Transactional
-    public Command addQuestion(QuestionDTO dto) {
+    public AddQuestionCommand addQuestion(QuestionDTO dto) {
         AddQuestionCommand command = new AddQuestionCommand();
         Question question = new Question(
                 dto.getId(), dto.getAuthor(), dto.getTitle(), dto.getText(), dto.getCreation_date_time()

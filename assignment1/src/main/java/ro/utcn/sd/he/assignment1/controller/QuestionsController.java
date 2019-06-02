@@ -2,6 +2,7 @@ package ro.utcn.sd.he.assignment1.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ro.utcn.sd.he.assignment1.command.AddQuestionCommand;
 import ro.utcn.sd.he.assignment1.command.Command;
 import ro.utcn.sd.he.assignment1.dto.QuestionDTO;
 import ro.utcn.sd.he.assignment1.dto.UserDTO;
@@ -41,10 +42,11 @@ public class QuestionsController {
     }
 
     @PostMapping("/questions")
-    public String addQuestion(@RequestBody QuestionDTO dto) {
-        Command command = questionTagService.addQuestion(dto);
+    public QuestionDTO addQuestion(@RequestBody QuestionDTO dto) {
+        AddQuestionCommand command = questionTagService.addQuestion(dto);
         commands.add(command);
-        return "Succesfull";
+        QuestionDTO questionDTO = QuestionDTO.ofEntity(command.getQuestion());
+        return questionDTO;
     }
 
 //    @PostMapping("/users")
