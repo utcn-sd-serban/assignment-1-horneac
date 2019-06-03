@@ -72,7 +72,7 @@ public class AnswerController {
 
         BaseEvent event = new AnswerDeletedEvent(id);
         messagingTemplate.convertAndSend("/topic/events", event);
-        log.info("Got an event: {}.", event);
+
     }
 
     @PostMapping("/answers/vote")
