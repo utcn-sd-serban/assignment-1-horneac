@@ -1,10 +1,12 @@
 package ro.utcn.sd.he.assignment1.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import ro.utcn.sd.he.assignment1.command.AddQuestionCommand;
 import ro.utcn.sd.he.assignment1.dto.QuestionDTO;
 import ro.utcn.sd.he.assignment1.dto.QuestionVoteDTO;
+import ro.utcn.sd.he.assignment1.event.QuestionCreatedEvent;
 import ro.utcn.sd.he.assignment1.model.Question;
 import ro.utcn.sd.he.assignment1.model.Tag;
 import ro.utcn.sd.he.assignment1.persistence.api.RepositoryFactory;
@@ -19,6 +21,8 @@ public class QuestionTagService {
     private final QuestionService questionService;
     private final TagService tagService;
     private final RepositoryFactory factory;
+    private final ApplicationEventPublisher eventPublisher;
+    private final VoteService voteService;
 
     @Transactional
     public List<Question> getQuestionsWithTag(Tag tag) {
@@ -49,6 +53,8 @@ public class QuestionTagService {
         command.setQuestion(question);
         command.setTags(dto.getTags());
         command.execute(factory);
+        QuestionVoteDTO questionVoteDTO = QuestionVoteDTO.ofEntity(command.getQuestion(), voteService.getVoteCount(command.getQuestion()));
+        eventPublisher.publishEvent(new QuestionCreatedEvent(questionVoteDTO));
         return command;
     }
 

@@ -1,0 +1,5 @@
+package ro.utcn.sd.he.assignment1.event;
+
+public enum EventType {
+    QUESTION_CREATED, QUESTION_VOTE, ANSWER_CREATED, ANSWER_EDITED, ANSWER_DELETED, ANSWER_VOTE, ANSWER_VOTE_DOWN
+}
